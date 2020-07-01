@@ -1,2 +1,6 @@
 *.class
 *.log
+target
+.metals
+.DS_Store
+*/.idea

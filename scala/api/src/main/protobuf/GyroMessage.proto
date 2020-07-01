@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package dosht.kafka.api;
+
+message GyroMessage {
+  int64 timestamp = 1;
+  int64 deviceId = 2;
+  int64 roll = 3;
+  int64 pitch = 4;
+  int64 yaw = 5;
+}
