@@ -3,4 +3,4 @@
 target
 .metals
 .DS_Store
-*/.idea
+.idea

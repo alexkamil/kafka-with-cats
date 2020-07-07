@@ -17,7 +17,7 @@ object ProducerApplication extends IOApp {
   } yield exitCode
 
   def startProducer(config: ProducerConfig): IO[Unit] =
-    ProducerResource
+    Producer
       .resource(config.bootstrapServers, config.topic)
       .use(p =>
         p.send(GyroMessage(2L, 1L, 1L ,1L, 1L)) *>
