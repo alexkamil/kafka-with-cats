@@ -4,6 +4,7 @@ import cats.effect.{IO, Timer}
 import dosht.kafka.api.GyroMessage
 import dosht.kafka.cats.{EmbeddedKafkaResource, IOAsyncWordSpec}
 import dosht.kafka.producer.Producer
+import dosht.kafka.cats.KafkaContext
 
 import scala.concurrent.duration._
 

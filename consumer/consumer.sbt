@@ -14,6 +14,7 @@ lazy val consumer = project.in(file("."))
       Cats.catsCore,
       Cats.catsEffect,
       Core.pureConfig,
+
       Testing.scalaTest % Test,
       Testing.scalaTest % IntegrationTest,
     )

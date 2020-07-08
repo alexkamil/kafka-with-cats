@@ -4,6 +4,8 @@ object Dependencies {
     object Core {
         val guava = "com.google.guava" % "guava" % "28.1-jre"
         val pureConfig = "com.github.pureconfig" %% "pureconfig" % "0.12.3"
+        val log4jOverSlf4j = "org.slf4j" % "log4j-over-slf4j" % "1.7.26"
+
     }
 
     object Protobuf {

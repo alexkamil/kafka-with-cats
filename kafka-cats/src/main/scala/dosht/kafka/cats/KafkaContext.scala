@@ -1,6 +1,6 @@
-package dosht.kafka.consumer
+package dosht.kafka.cats
 
-import java.util.concurrent.{ExecutorService, Executors, ThreadFactory}
+import java.util.concurrent.{ExecutorService, Executors}
 
 import cats.effect.{ContextShift, IO, Resource}
 import com.google.common.util.concurrent.ThreadFactoryBuilder

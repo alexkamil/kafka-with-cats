@@ -5,13 +5,13 @@ import java.util.{Collections, Properties}
 
 import cats.effect.{IO, Resource, Timer}
 import dosht.kafka.api.GyroMessage
-import dosht.kafka.consumer.KafkaContext
+import dosht.kafka.cats.KafkaContext
 import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer, OffsetResetStrategy, ConsumerConfig => KafkaConsumerConfig}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 import scalapb.GeneratedMessageCompanion
 
 import scala.collection.JavaConverters._
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, TimeoutException}
 import scala.util.{Failure, Success, Try}
 
 class Consumer(messageHandler: MessageHandler, config: ConsumerConfig, kafkaContext: KafkaContext) {
@@ -29,6 +29,15 @@ class Consumer(messageHandler: MessageHandler, config: ConsumerConfig, kafkaCont
     new KafkaConsumer[String, Array[Byte]](props, new StringDeserializer, new ByteArrayDeserializer)
   }
 
+  def checkKafkaAvailabilityOrAbort: IO[Unit] = kafkaContext ~> {
+    try {
+      kafkaConsumer.listTopics(Duration.ofMillis(5000))
+    } catch {
+      case e: TimeoutException =>
+        throw new Exception("Kafka is not available. Timeout while checking the connectivity of the Kafka server.", e)
+    }
+  }
+
   def close: IO[Unit] = kafkaContext ~> kafkaConsumer.close()
 
   def subscribe(): IO[Unit] = kafkaContext ~> kafkaConsumer.subscribe(Collections.singletonList(config.topic))
@@ -38,7 +47,7 @@ class Consumer(messageHandler: MessageHandler, config: ConsumerConfig, kafkaCont
     (errors, parsedMessages) = parseMessages(rawMessages)
     _ <- logErrors(errors)
     _ <- countErrors(errors)
-    _ <- messageHandler.handleMessage(parsedMessages)
+    _ <- handleMessagesWithRetry(parsedMessages)
     _ <- poll
   } yield ()
 
@@ -54,9 +63,20 @@ class Consumer(messageHandler: MessageHandler, config: ConsumerConfig, kafkaCont
       case Failure(exception) => Left(exception.getMessage)
     }
 
+  private def handleMessagesWithRetry(messages: List[GyroMessage], retryCount: Int = 0): IO[Unit] =
+    if (messages.isEmpty) IO.unit
+    else messageHandler.handleMessages(messages).flatMap(count =>
+      if (count == messages.size) kafkaContext ~> kafkaConsumer.commitSync()
+      else {
+        IO(println(s"Retrying handleMessages $retryCount ...")) *>
+          handleMessagesWithRetry(messages, retryCount + 1)
+      }
+    )
+
   private def logErrors(errors: List[String]): IO[Unit] =
     if (errors.nonEmpty) IO(println(s"error --------> $errors")) else IO.unit
 
+  // collect errors and send metrics
   private def countErrors(errors: List[String]): IO[Unit] = IO.unit
 
 }

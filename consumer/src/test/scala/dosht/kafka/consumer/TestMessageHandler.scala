@@ -9,7 +9,7 @@ class TestMessageHandler extends MessageHandler {
 
   val queue: MutableQueue[GyroMessage] = MutableQueue.empty
 
-  override def handleMessage(messages: List[GyroMessage]): IO[Int] = {
+  override def handleMessages(messages: List[GyroMessage]): IO[Int] = {
     queue ++= messages
     IO.pure(messages.size)
   }

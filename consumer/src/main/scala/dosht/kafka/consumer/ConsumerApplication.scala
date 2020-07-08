@@ -1,7 +1,7 @@
 package dosht.kafka.consumer
 
 import cats.effect.{ConcurrentEffect, ExitCode, IO, IOApp, Resource}
-import dosht.kafka.consumer.KafkaContext
+import dosht.kafka.cats.KafkaContext
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
@@ -17,8 +17,10 @@ object ConsumerApplication extends IOApp {
   } yield exitCode
 
   def startConsumer(config: ConsumerConfig): IO[Unit] =
-    consumerResource(config).use(
-      consumer => consumer.subscribe *> consumer.poll)
+    consumerResource(config).use(consumer =>
+        consumer.checkKafkaAvailabilityOrAbort *>
+        consumer.subscribe *>
+        consumer.poll)
 
   def consumerResource(config: ConsumerConfig): Resource[IO, Consumer] = for {
     kafkaContext <- KafkaContext.resource(cs)

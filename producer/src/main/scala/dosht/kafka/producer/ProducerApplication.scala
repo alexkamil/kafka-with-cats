@@ -19,11 +19,13 @@ object ProducerApplication extends IOApp {
   def startProducer(config: ProducerConfig): IO[Unit] =
     Producer
       .resource(config.bootstrapServers, config.topic)
-      .use(p =>
-        p.send(GyroMessage(2L, 1L, 1L ,1L, 1L)) *>
-        p.send(GyroMessage(3L, 1L, 1L ,1L, 1L)) *>
-        p.send(GyroMessage(4L, 1L, 1L ,1L, 1L)) *>
-        p.send(GyroMessage(5L, 1L, 1L ,1L, 1L)) *>
-          IO(println("------------>")) *>
-          p.close)
+      .use { producer =>
+        IO(println("Producer started!")) *>
+        producer.send(GyroMessage(2L, 1L, 1L ,1L, 1L)) *>
+        producer.send(GyroMessage(3L, 1L, 1L ,1L, 1L)) *>
+        producer.send(GyroMessage(4L, 1L, 1L ,1L, 1L)) *>
+        producer.send(GyroMessage(5L, 1L, 1L ,1L, 1L)) *>
+        IO(println("Messages sent ------------>")) *>
+        producer.close
+      }
 }
