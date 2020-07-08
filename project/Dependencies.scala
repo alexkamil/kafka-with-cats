@@ -22,7 +22,7 @@ object Dependencies {
     object Kafka {
         private val kafkaVersion = "2.5.0"
         val kafkaClient = "org.apache.kafka" % "kafka-clients" % kafkaVersion
-        val embeddedKafka = "io.github.embeddedkafka" %% "embedded-kafka" % kafkaVersion % "test"
+        val embeddedKafka = "io.github.embeddedkafka" %% "embedded-kafka" % kafkaVersion
     }
 
       object Testing {

@@ -5,7 +5,7 @@ import java.util.{Collections, Properties}
 
 import cats.effect.{IO, Resource, Timer}
 import dosht.kafka.api.GyroMessage
-import dosht.kafka.cats.KafkaContext
+import dosht.kafka.consumer.KafkaContext
 import org.apache.kafka.clients.consumer.{ConsumerRecord, KafkaConsumer, OffsetResetStrategy, ConsumerConfig => KafkaConsumerConfig}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 import scalapb.GeneratedMessageCompanion

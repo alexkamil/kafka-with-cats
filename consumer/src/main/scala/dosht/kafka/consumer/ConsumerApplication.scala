@@ -1,7 +1,7 @@
 package dosht.kafka.consumer
 
 import cats.effect.{ConcurrentEffect, ExitCode, IO, IOApp, Resource}
-import dosht.kafka.cats.KafkaContext
+import dosht.kafka.consumer.KafkaContext
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
