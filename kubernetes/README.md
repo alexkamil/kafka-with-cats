@@ -7,8 +7,3 @@ To install Kafka and Zookeeper on K8s, do the following:
 kubectl create namespace kafka
 kubectl apply -n kafka -f kafka-with-zookeeper.k8s.yaml
 ```
-
-kubectl exec -it my-kafka-0 -- kafka-console-consumer --bootstrap-server my-kafka-headless:9092 --topic helm-test-topic-create-consume-produce --from-beginning
-
-kubectl exec -it my-kafka-1 -- kafka-console-producer --broker-list my-kafka:9092 --topic helm-test-topic-create-consume-produce
-
